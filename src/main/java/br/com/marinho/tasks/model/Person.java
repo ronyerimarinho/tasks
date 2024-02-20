@@ -26,6 +26,10 @@ public class Person implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
+    private ResidenceAddress address;
+
     @ManyToMany(mappedBy = "assignees")
     private Set<Task> tasks = new HashSet<>();
 
@@ -43,12 +47,24 @@ public class Person implements UserDetails {
         return guid;
     }
 
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -59,6 +75,18 @@ public class Person implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ResidenceAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(ResidenceAddress address) {
+        this.address = address;
     }
 
     @Override

@@ -33,6 +33,7 @@ public class PersonService implements UserDetailsService {
     }
 
     public Person findByEmail(String email) throws UserNotFoundException {
+        LOGGER.info("Searching for user by email...");
         return this.personRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User by email not found: %s", email)));
     }

@@ -7,6 +7,7 @@ import br.com.marinho.tasks.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
@@ -27,8 +28,8 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<PersonDTO> create(@RequestBody @Valid CreatePersonForm form) {
+    public ResponseEntity<PersonDTO> create(@RequestBody @Valid CreatePersonForm form, UriComponentsBuilder uriComponentsBuilder) {
         PersonDTO response = this.personService.create(form);
-        return ResponseEntity.created(URI.create(String.format("/person/%s", response.guid()))).body(response);
+        return ResponseEntity.created(uriComponentsBuilder.path("/person/{id}").buildAndExpand(response.guid()).toUri()).body(response);
     }
 }

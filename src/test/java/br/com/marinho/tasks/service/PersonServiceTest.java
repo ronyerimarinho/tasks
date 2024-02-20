@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
@@ -123,7 +125,8 @@ class PersonServiceTest {
         this.personService.create(form);
 
         /* Assert */
-        BDDMockito.then(this.personRepository).should().save(this.personCaptor.capture());
+        verify(this.personRepository).save(this.personCaptor.capture());
+//        BDDMockito.then(this.personRepository).should().save(this.personCaptor.capture());
         Person createdPerson = this.personCaptor.getValue();
 
         Assertions.assertEquals(form.name(), createdPerson.getName());

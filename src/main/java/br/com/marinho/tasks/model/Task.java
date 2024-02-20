@@ -87,6 +87,10 @@ public class Task {
         this.deleted = deleted;
     }
 
+    public Person getPerson() {
+        return person;
+    }
+
     public Set<Person> getAssignees() {
         return assignees;
     }

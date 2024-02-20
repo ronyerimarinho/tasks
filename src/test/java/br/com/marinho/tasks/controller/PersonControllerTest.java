@@ -17,11 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.UUID;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -42,7 +45,30 @@ class PersonControllerTest {
     }
 
     @Test
-    void get() {
+    @WithMockUser(username = "teste", password = "teste")
+    void getUserWithAuthenticationReturnsOk() throws Exception {
+        /* Arrange */
+        String id = UUID.randomUUID().toString();
+        PersonDTO personDTO = new PersonDTO(id, "Usuário teste", "teste@example.com");
+
+        BDDMockito.given(this.personService.getByGuid(id)).willReturn(personDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get(String.format("/person/%s", id)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getUserWithoutAuthenticationReturnsUnauthorized() throws Exception {
+        /* Arrange */
+        String id = UUID.randomUUID().toString();
+        PersonDTO personDTO = new PersonDTO(id, "Usuário teste", "teste@example.com");
+
+        BDDMockito.given(this.personService.getByGuid(id)).willReturn(personDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get(String.format("/person/%s", id)))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -73,10 +99,10 @@ class PersonControllerTest {
 
         /* Act */
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/person")
-                .content(formAsJson)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                        .post("/person")
+                        .content(formAsJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().exists("Location"));
 
     }
